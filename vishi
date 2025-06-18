@@ -1,2 +1,652 @@
 hii
 hello
+prog 1
+1.
+1.git --version
+2.git config --global user.name "parnika"
+git config --global user.email "parnikabn05@gmail.com"
+3.mkdir git-demo1
+cd git-demo1
+echo "Hello Git!" > demo.txt
+4.git init
+5.git add demo.txt
+git commit -m "Initial commit"
+6.git branch -M main
+git remote add origin https://github.com/PARNIKA-BN/git-demo1.git
+8.git push -u origin main
+9.cd ~/git-demo1   # or the folder where your repo is
+git pull
+
+
+
+prog 2
+docker --version 
+docker info
+
+docker pull ubuntu
+docker run -it ubuntu
+exit
+
+docker ps
+docker ps -a
+docker stop id
+docker rm id
+
+docker images 
+docker rmi id
+
+create folders
+
+app.py
+from flask import FLASK
+app = FLASK(__name__)
+@app.route("/")
+def home():
+	return "HELLO"
+if __name__ == "__main__":
+	app.run(host="0.0.0.0",port=5000)
+
+req
+flask
+
+dockerfile
+FROM python:3.9-slim
+WORKDIR /app
+COPY requirements.txt .
+RUN pip install -r requirements.txt
+COPY . .
+CMD ["python", "app.py"]
+
+docker build -t -flask-app .
+docker run -d -p 5000:5000 flask-app
+
+http://localhost:5000
+
+docker login
+docker tag flask-app un/flask-app
+docker push un/flask-app
+
+
+
+prog 3
+docker --version
+docker info
+docker -compose --version 
+
+
+docker-compose.yml
+
+version: '3'
+
+services:
+  web:
+    build: lapp
+    ports:
+      - "5000:5000"
+    depends_on:
+      - db
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_DATABASE: sampledb
+      MYSQL_USER: user
+      MYSQL_PASSWORD: password
+      MYSQL_ROOT_PASSWORD: rootpass
+    ports:
+      - "3306:3306"
+
+cd microservice_app
+docker-compose -up --build 
+
+https
+
+docker ps
+
+docker-compose down
+
+
+4.
+Here’s a complete step-by-step guide to install and configure Jenkins and SonarQube on Windows for your Experiment 4:
+
+
+---
+
+✅ PART 1: Install Java (JDK 11)
+
+Why: giJenkins and SonarQube require Java to run.
+
+🔧 Steps:
+
+1. Download JDK 11 from Oracle or OpenJDK:
+
+https://www.oracle.com/java/technologies/javase-jdk11-downloads.html
+
+OR https://adoptium.net/en-GB/temurin/releases/?version=11
+
+
+
+2. Install the JDK.
+
+
+3. Set JAVA_HOME:
+
+Go to: System Properties > Environment Variables
+
+Add a new System Variable:
+
+Name: JAVA_HOME
+
+Value: C:\Program Files\Java\jdk-11.0.x
+
+
+Edit Path and add: %JAVA_HOME%\bin
+
+
+
+4. ✅ Check:
+
+java -version
+
+
+
+
+---
+
+✅ PART 2: Install Jenkins on Windows
+
+Why: Jenkins automates your CI/CD pipelines.
+
+🔧 Steps:
+
+1. Download Jenkins (Windows installer) from:
+🔗 https://www.jenkins.io/download/
+
+
+2. Run the .msi installer. It:
+
+Installs Jenkins as a Windows Service
+
+Runs Jenkins on http://localhost:8080 by default
+
+
+
+3. Unlock Jenkins:
+
+Navigate to: http://localhost:8080
+
+Find initial password:
+
+C:\ProgramData\Jenkins\.jenkins\secrets\initialAdminPassword
+
+Paste it on the browser screen.
+
+
+
+4. Install suggested plugins.
+
+
+5. Create Admin user.
+
+
+
+
+---
+
+✅ PART 3: Install SonarQube on Windows
+
+Why: SonarQube analyzes code quality and detects bugs/smells.
+
+🔧 Steps:
+
+1. Download SonarQube from:
+🔗 https://www.sonarsource.com/downloads/
+
+
+2. Extract to a folder:
+Example: C:\sonarqube
+
+
+3. Navigate to:
+
+C:\sonarqube\bin\windows-x86-64\
+
+
+4. Start SonarQube by running:
+
+StartSonar.bat
+
+
+5. Open:
+http://localhost:9000
+
+
+6. Login:
+
+Username: admin
+
+Password: admin
+
+Change password on first login.
+
+
+
+
+
+---
+
+✅ PART 4: Install SonarQube Scanner Plugin in Jenkins
+
+🔧 Steps:
+
+1. In Jenkins:
+Manage Jenkins → Manage Plugins → Available
+
+
+2. Search and install:
+
+✅ SonarQube Scanner
+
+Restart Jenkins
+
+
+
+
+
+---or
+
+✅ PART 5: Configure SonarQube in Jenkins
+
+🔧 Steps:
+
+1. Go to: Manage Jenkins → Configure System
+
+
+2. Scroll to SonarQube servers:
+
+Click Add SonarQube:
+
+Name: My SonarQube Server
+
+Server URL: http://localhost:9000
+
+Authentication Token:
+
+Go to SonarQube → My Account > Security > Generate Token
+
+Paste in Jenkins
+
+
+
+
+
+3. Click Save
+
+
+
+
+---
+
+✅ PART 6: Install Maven in Jenkins (For Pipeline)
+
+🔧 Steps:
+
+1. Go to Manage Jenkins → Global Tool Configuration
+
+
+2. Under Maven:
+
+Name: Maven3
+
+Install automatically → Select latest version
+
+
+
+
+
+---
+
+✅ PART 7: Sample Jenkinsfile with SonarQube Integration
+
+🧾 Place this in your GitHub repo (root):
+
+pipeline {
+    agent any
+    tools {
+        maven 'Maven3'
+    }
+    environment {
+        SONARQUBE = 'My SonarQube Server'
+    }
+    stages {
+        stage('Clone Repository') {
+            steps {
+                bat 'git clone https://github.com/YourUsername/your-repo.git'
+                dir('your-repo') {
+                    bat 'dir'
+                }
+            }
+        }
+        stage('Build') {
+            steps {
+                dir('your-repo') {
+                    bat 'mvn clean install'
+                }
+            }
+        }
+        stage('SonarQube Analysis') {
+            steps {
+                dir('your-repo') {
+                    withSonarQubeEnv("${SONARQUBE}") {
+                        bat 'mvn sonar:sonar'
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+
+
+prog 6
+## ✅ Step 1: Install Java (JDK)
+
+1. Download and install JDK (Java Development Kit):
+
+   * Visit: [https://www.oracle.com/java/technologies/javase-downloads.html](https://www.oracle.com/java/technologies/javase-downloads.html)
+   * Install JDK 17 or 21
+
+2. Set environment variables:
+
+   * JAVA\_HOME = path to JDK (e.g., C:\Program Files\Java\jdk-21)
+   * Add %JAVA\_HOME%\bin to your system PATH
+
+3. Verify installation:
+
+   ```bash
+   java -version
+   javac -version
+   ```
+
+---
+
+## ✅ Step 2: Install Gradle
+
+1. Download Gradle binary from:
+
+   * [https://gradle.org/releases/](https://gradle.org/releases/) (download "binary-only" ZIP)
+
+2. Extract the ZIP (e.g., to C:\Gradle)
+
+3. Set environment variables:
+
+   * GRADLE\_HOME = path to Gradle (e.g., C:\Gradle\gradle-8.14.2)
+   * Add %GRADLE\_HOME%\bin to PATH
+
+4. Verify installation:
+
+   ```bash
+   gradle -v
+   ```
+
+---
+
+## ✅ Step 3: Create or Use Existing Maven Project
+
+If you already have a Maven project:
+
+Directory structure:
+
+```
+demo-project/
+├── pom.xml
+└── src/
+    └── main/
+        └── java/
+            └── com/
+                └── example/
+                    └── App.java
+```
+
+Example App.java:
+
+```java
+package com.example;
+
+public class App {
+    public static void main(String[] args) {
+        System.out.println("Hello from Gradle!");
+    }
+}
+```
+
+---
+
+## ✅ Step 4: Migrate Maven to Gradle
+
+1. Navigate to your project directory:
+
+   ```bash
+   cd C:\Users\Lenovo\demo-project
+   ```
+
+2. Run Gradle init:
+
+   ```bash
+   gradle init
+   ```
+
+   When prompted:
+
+   * Generate from Maven? → yes
+   * DSL → 2 (Groovy)
+   * Use new APIs → no
+
+3. A build.gradle and settings.gradle will be generated.
+
+---
+
+## ✅ Step 5: Edit build.gradle
+
+Open build.gradle and ensure it looks like this:
+
+```groovy
+plugins {
+    id 'java'
+    id 'application'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    testImplementation 'junit:junit:4.13.2'
+}
+
+application {
+    mainClass = 'com.example.App'
+}
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_1_8
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+```
+
+Replace com.example.App with your actual main class package if different.
+
+---
+
+## ✅ Step 6: Build the Project
+
+Run:
+
+```bash
+gradle build
+```
+
+✅ If successful, you’ll see:
+
+```
+BUILD SUCCESSFUL
+```
+
+---
+
+## ✅ Step 7: Run the Application
+
+Run:
+
+```bash
+gradle run
+```
+
+You should see:
+
+```
+Hello from Gradle!
+```
+
+---
+
+
+prog 5
+## ✅ **2. Download and Install Apache Maven**
+
+### 📥 Step 1: Download Maven
+
+* Visit: [https://maven.apache.org/download.cgi](https://maven.apache.org/download.cgi)
+* Download: ✅ `apache-maven-3.9.6-bin.zip`
+  ❌ Do NOT download:
+* `src.zip` (source code)
+* `.tar.gz` (for Linux/Unix)
+
+### 📂 Step 2: Extract ZIP
+
+* Extract to:
+  `C:\Program Files\Apache\Maven\apache-maven-3.9.6`
+
+---
+
+## ✅ **3. Configure Environment Variables**
+
+### 🔧 Step 3: Set Environment Variables
+
+Open **Command Prompt as Administrator** and run:
+
+```cmd
+setx MAVEN_HOME "C:\Program Files\Apache\Maven\apache-maven-3.9.6" /M
+C
+
+### 🔁 Restart Command Prompt
+
+Verify installation:
+
+```bash
+mvn -v
+```
+
+Expected output (sample):
+
+```
+Apache Maven 3.9.6
+Java version: 21
+```
+
+---
+
+## ✅ **4. Create Maven Project**
+
+### 🛠 Step 4: Generate Project
+
+Run the following in **Command Prompt**:
+
+```bash
+mvn archetype:generate -DgroupId=com.example -DartifactId=demo-project -DarchetypeArtifactId=maven-archetype-quickstart -DinteractiveMode=false
+```
+
+### 📁 Project Structure:
+
+```
+demo-project/
+├── pom.xml
+└── src/
+    ├── main/
+    │   └── java/
+    │       └── com/
+    │           └── example/
+    │               └── App.java
+    └── test/
+        └── java/
+            └── com/
+                └── example/
+                    └── AppTest.java
+```
+
+---
+
+## ✅ **5. Understand `pom.xml`**
+
+### 📄 Sample `pom.xml` Structure
+
+```xml
+<project>
+  <modelVersion>4.0.0</modelVersion>
+
+  <groupId>com.example</groupId>
+  <artifactId>demo-project</artifactId>
+  <version>1.0-SNAPSHOT</version>
+
+  <dependencies>
+    <!-- Add dependencies here -->
+  </dependencies>
+</project>
+```
+
+---
+
+## ✅ **6. Add Dependencies**
+
+📦 Example: Add Gson for JSON parsing
+
+Inside `<dependencies>` block in `pom.xml`:
+
+```xml
+<dependency>
+  <groupId>com.google.code.gson</groupId>
+  <artifactId>gson</artifactId>
+  <version>2.10.1</version>
+</dependency>
+```
+
+➡️ You can similarly add any other libraries.
+
+---
+
+## ✅ **7. Build Maven Project**
+
+```bash
+cd demo-project
+mvn compile       # Compiles the code
+mvn test          # Runs test cases
+mvn package       # Creates JAR file in 'target' folder
+```
+
+---
+
+## ✅ **8. Run the JAR File**
+
+If you have a `main()` method in `App.java`, run:
+
+```bash
+java -cp target/demo-project-1.0-SNAPSHOT.jar com.example.App
+```
+
+---
+Here’s a complete step-by-step guide to install Gradle, migrate from Maven to Gradle, and run App.java on a Windows system. This covers everything from setting up Gradle to executing the application.
+
+🎯 Goal: Build and run a Java application originally using Maven, migrated and executed via Gradle.
+
